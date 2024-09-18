@@ -18,3 +18,11 @@ def show_survey_start():
   """Select a survey."""
 
   return render_template("survey_start.html", survey=survey)
+
+@app.route("/begin", methods=["POST"])
+def start_survey():
+  """Clear the session of responses."""
+
+  session[RESPONSES_KEY] = []
+
+  return redirect("/questions/0")
