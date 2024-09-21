@@ -48,3 +48,28 @@ def show_question(qid):
   question = survey.questions[qid]
   return render_template(
     "question.html", question_num=qid, question=question)
+
+@app.route("/answer", methods=["POST"])
+def handle_question():
+  """Save response and redirect to next question."""
+
+  # get the response choice
+  choice = request.form['answer']
+
+  # add this response to the session
+  responses = session[RESPONSES_KEY]
+  responses.append(choice)
+  session[RESPONSES_KEY] = responses
+
+  if (len(responses) == len(survey.questions)):
+    # They've answered all the questions! Thank them.
+    return redirect("/complete")
+
+  else:
+    return redirect(f"/questions/{len(responses)}")
+
+@app.route("/complete")
+def complete():
+  """Survey complete. Show completion page."""
+
+  return render_template("completion.html")
